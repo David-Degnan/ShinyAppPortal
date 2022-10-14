@@ -1,0 +1,3 @@
+# Only numpy and minio python packages are required for the Portal-App container
+numpy
+minio==7.0.2

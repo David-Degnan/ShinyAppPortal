@@ -14,7 +14,14 @@ RUN apt-get update && apt-get install -y \
     libxt-dev \
     libssl-dev \
     libssh2-1-dev \
-    xdg-utils 
+    xdg-utils \
+    vim python3-venv
+
+# Install python dependencies
+RUN python3 -m venv /venv
+RUN /venv/bin/pip install --upgrade pip
+COPY requirements.txt .
+RUN /venv/bin/pip install -r requirements.txt
 
 # Install necessary packages
 RUN Rscript -e 'install.packages(c("remotes", "shiny", "dataset"))'
