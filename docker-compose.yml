@@ -18,28 +18,29 @@ services:
         image: portalapp:1.0 # Build 
         container_name: portalapp1
         volumes:
-            - "./cfg/minio_config_compose.yml:/srv/shiny-server/cfg/minio_config_compose.yml" # App needs to connect to minio
+            - "./cfg/minio_config.yml:/srv/shiny-server/cfg/minio_config.yml" # App needs to connect to minio
+            - "./Portal-App/app.R:/srv/shiny-server/app.R"
         ports:
             - "8300:8300"
         environment:
             - SHINYPROXY_USERNAME=test_user # Required to create folder in minio
-    filterdata-app: # Demo container for filtering and plotting the iris dataset
-        image: filterdata:1.0 # Build 
-        container_name: filterdata1
-        volumes:
-            - "./cfg/minio_config_compose.yml:/srv/shiny-server/cfg/minio_config_compose.yml" # App needs to connect to minio
-            - "./cfg/redis_config.yml:/redis_config.yml" # App needs to connect to redis
-        ports:
-            - "4200:4200"
-        environment:
-            - SHINYPROXY_USERNAME=test_user # Required to create folder in minio
-    filterdata-service:
-        image: filterdata-svc:1.0 # Build 
-        container_name: filterservice1
-        volumes:
-            - "./cfg/minio_config_compose.yml:/minio_config_compose.yml" # Service needs to connect to minio
-            - "./cfg/redis_config.yml:/redis_config.yml" # Service needs to connect to redis
-        ports:
-            - "5601:3838"
+    #filterdata-app: # Demo container for filtering and plotting the iris dataset
+    #    image: filterdata:1.0 # Build 
+    #    container_name: filterdata1
+    #    volumes:
+    #        - "./cfg/minio_config_compose.yml:/srv/shiny-server/cfg/minio_config_compose.yml" # App needs to connect to minio
+    #        - "./cfg/redis_config.yml:/redis_config.yml" # App needs to connect to redis
+    #    ports:
+    #        - "4200:4200"
+    #    environment:
+    #        - SHINYPROXY_USERNAME=test_user # Required to create folder in minio
+    #filterdata-service:
+    #    image: filterdata-svc:1.0 # Build 
+    #    container_name: filterservice1
+    #    volumes:
+    #        - "./cfg/minio_config_compose.yml:/minio_config_compose.yml" # Service needs to connect to minio
+    #        - "./cfg/redis_config.yml:/redis_config.yml" # Service needs to connect to redis
+    #    ports:
+    #        - "4201:3838"
 
 

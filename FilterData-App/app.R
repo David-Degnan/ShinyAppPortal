@@ -1,11 +1,10 @@
 # MOAP Project
-# Dummy app "FilterData" for Container 1
+# Dummy app "FilterData"
 # Last Updated: October 14, 2022
 
 library(datasets)
 library(shiny)
-library(shinyWidgets)
-library(uuid)
+library(mapDataAccess)
 
 # Filter data UI
 ui <- fluidPage(
@@ -16,12 +15,9 @@ ui <- fluidPage(
     # Subset iris data by species and sepal length
     sidebarLayout(
         sidebarPanel(
-            selectInput("Species", "Select Species", iris$Species, selected = iris$Species,
-                        multiple = T),
-            sliderInput("SepalLength", "Set Sepal Length", min(iris$Sepal.Length), 
-                        max(iris$Sepal.Length), value = c(min(iris$Sepal.Length), max(iris$Sepal.Length)),
-                        step = 0.1),
-            actionButton("ExportToPlotData", "Export to Plot Data App")
+          selectInput("Dataset", "Select Dataset", c("iris", "cars", "trees")), 
+          numericInput("RemoveLevel", "Remove values in column 1 below", value = 5),
+          actionButton("FilterFun", "Filter data in another container")
         ),
 
         # Show a table of results
@@ -33,48 +29,31 @@ ui <- fluidPage(
 
 # Define server logic to make the table
 server <- function(session, input, output) {
-    
+  
+    # Store a reactive value to hold results
+    FilteredTable <- reactiveValues(Table = NULL)
+  
     # Get resulting table
     getTable <- reactive({
-      return(
-        iris[iris$Species %in% input$Species & iris$Sepal.Length >= min(input$SepalLength) &
-               iris$Sepal.Length <= max(input$SepalLength),]
-      )
+      if (input$Dataset == "iris") {return(datasets::iris)} else 
+      if (input$Dataset == "cars") {return(datasets::cars)} else {return(datasets::trees)}
     })
-   
-  
+      
     # Display table
     output$Table <- renderTable({
-      getTable()
+      if (is.null(FilteredTable$Table)) {return(getTable())} else {FilteredTable$Table}
     })
     
     # Output table as a csv
-    observeEvent(input$ExportToPlotData, {
+    observeEvent(input$FilterFun, {
       
-      # Create the UUID
-      UUID <- UUIDgenerate()
+      # Pull the data
+      data <- getTable()
       
-      # Generate the filepath
-      filepath <- file.path("/data", paste0(UUID, "_data.csv"))
-      
-      # Write the table as a csv
-      write.csv(getTable(), filepath, quote = F, row.names = F)
-      
-      # Append commands csv
-      CMDS <- read.csv("/data/CMDS.csv")
-      CMDS <- data.frame(rbind(CMDS, c(UUID, paste0("?data=", filepath))))
-      colnames(CMDS) <- c("UUID", "Parameters")
-      write.csv(CMDS, "/data/CMDS.csv", quote = F, row.names = F)
-      
-      # Generate the url
-      sendURL <- paste0("http://localhost:6400/?", UUID)
-      
-      sendSweetAlert(session, "Data Ready! Click link.",
-       a("FilterApp", href = sendURL, target = "_blank"), type = "success"
-      )
+      # Remove values
+      FilteredTable$Table <- data[which(data[,1] > input$RemoveLevel),]
       
     })
-    
     
 }
 

@@ -1,5 +1,5 @@
 # Portal Example
-# 
+# Application: Main Portal
 # Last Updated: October 14, 2022
 
 # Shiny infrastructure packages
@@ -10,6 +10,13 @@ library(mapDataAccess)
 
 # Load R datasets
 library(datasets)
+
+sendModalAlert <- function(message = "") {
+  showModal(modalDialog(
+    HTML(paste0('<span style="font-size: 22px;">', message, '</span>')),
+    title = "", size = "s", easyClose = TRUE
+  ))
+}
 
 # Filter data UI
 ui <- fluidPage(
@@ -48,17 +55,21 @@ server <- function(session, input, output) {
     })
     
     # Output table as a csv
-    observeEvent(input$ExportToPlotData, {
+    observeEvent(input$OpenApp, {
       
       # Set up minio configuration
-      #miniocon <- 
+      miniocon <- map_data_connection("./cfg/minio_config.yml")
+      
+      # Put data up on minio and save the ID 
+      id <- put_data(miniocon, getTable())
+      
+      # Add a tag of which dataset 
+      set_tags(miniocon, id, list("data" = input$Dataset))
       
       # Generate the url
-      #sendURL <- paste0("http://localhost:6400/?", UUID)
+      sendURL <- paste0("http://localhost:4200/?", id)
       
-      #sendSweetAlert(session, "Data Ready! Click link.",
-      # a("FilterApp", href = sendURL, target = "_blank"), type = "success"
-      #)
+      sendModalAlert(paste0("Data Ready! Go to link:", sendURL))
       
     })
     

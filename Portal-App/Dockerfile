@@ -1,0 +1,33 @@
+## "Portal-App" dockerfile
+## Last Updated: 2022_10_14
+
+# Install latest version of rocker image
+FROM rocker/shiny:4.2.1
+
+# Load general use libraries
+RUN apt-get update && apt-get install -y \
+    sudo \
+    pandoc \
+    pandoc-citeproc \
+    libcurl4-gnutls-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libssl-dev \
+    libssh2-1-dev \
+    xdg-utils 
+
+# Install necessary packages
+RUN Rscript -e 'install.packages(c("remotes", "shiny", "dataset"))'
+
+# Install mapDataAccess
+RUN Rscript -e 'remotes::install_github("EMSL-Computing/mapDataAccess")'
+
+# Copy app.R into the shiny-server directory
+COPY app.R /srv/shiny-server/
+COPY cfg /srv/shiny-server/
+
+# Make the ShinyApp available at port 4200
+EXPOSE 8300
+
+# Launch App
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/', host = '0.0.0.0', port = 8300)"]
