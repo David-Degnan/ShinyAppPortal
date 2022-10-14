@@ -67,7 +67,7 @@ server <- function(session, input, output) {
       set_tags(miniocon, id, list("data" = input$Dataset))
       
       # Generate the url
-      sendURL <- paste0("http://localhost:4200/?", id)
+      sendURL <- paste0("http://localhost:4200/?data=", id)
       
       sendModalAlert(paste0("Data Ready! Go to link:", sendURL))
       
