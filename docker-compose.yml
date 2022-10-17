@@ -33,13 +33,13 @@ services:
             - "4200:4200"
         environment:
             - SHINYPROXY_USERNAME=test_user # Required to create folder in minio
-    #filterdata-service:
-    #    image: filterdata-svc:1.0 # Build 
-    #    container_name: filterservice1
-    #    volumes:
-    #        - "./cfg/minio_config_compose.yml:/minio_config_compose.yml" # Service needs to connect to minio
-    #        - "./cfg/redis_config.yml:/redis_config.yml" # Service needs to connect to redis
-    #    ports:
-    #        - "4201:3838"
+    filterdata-service:
+        image: filterdata-svc:1.0 # Build 
+        container_name: filterservice1
+        volumes:
+            - "./cfg/minio_config_compose.yml:/minio_config_compose.yml" # Service needs to connect to minio
+            - "./cfg/redis_config.yml:/redis_config.yml" # Service needs to connect to redis
+        ports:
+            - "4201:3838"
 
 

@@ -24,7 +24,7 @@ COPY requirements.txt .
 RUN /venv/bin/pip install -r requirements.txt
 
 # Install necessary packages
-RUN Rscript -e 'install.packages(c("shiny", "remotes"))'
+RUN Rscript -e 'install.packages(c("shiny", "remotes", "reticulate"))'
 
 # Install mapDataAccess
 RUN Rscript -e 'remotes::install_github("EMSL-Computing/mapDataAccess")'
