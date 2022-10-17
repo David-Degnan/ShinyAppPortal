@@ -116,7 +116,7 @@ server <- function(session, input, output) {
                            kwargs = list(
                              username = Sys.getenv("SHINYPROXY_USERNAME"),
                              id = TheTable$ID, 
-                             filterval = input$RemoveLabel
+                             filterval = input$RemoveLevel
                            ))
       
     })
