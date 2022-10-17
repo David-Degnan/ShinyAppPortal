@@ -26,3 +26,16 @@ RUN venv/bin/pip install -r requirements.txt --trusted-host=pypi.org --trusted-h
 
 # install mapDataAccess R package from gitlab
 RUN Rscript -e "install.packages(c('reticulate', 'yaml'), repos =  'https://cran.rstudio.com')"
+
+# Add redis 
+RUN Rscript -e "reticulate::use_virtualenv('/venv'); reticulate::py_install('Redis')"
+
+# Copy over required folders
+COPY rworker.R /
+COPY cfg /cfg/ 
+
+# Add the config files (these are dummy files in the repo, still need to mount actual config files)
+COPY minio_config.yml /minio_config.yml
+COPY redis_config.yml /redis_config.yml
+
+CMD ["Rscript", "rworker.R", "&"]

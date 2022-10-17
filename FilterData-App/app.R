@@ -1,5 +1,3 @@
-# e2orihjweiopt4 /t'pai39u [0r 
-# TRIGERER ANOWtwe;rlgfjwerpoj gpowrj
 # Portal Example
 # Application: "FilterData"
 # Last Updated: October 14, 2022
