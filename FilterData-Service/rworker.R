@@ -64,7 +64,7 @@ filterFun <- function(username,
   id2 <- put_file(miniocon, filteredData)
   
   # Set tags
-  set_tags(miniocon, id, list("data" = tags$Dataset))
+  set_tags(miniocon, id2, list("data" = tags$Dataset))
   
   # Return status
   task_progress(paste0("Load filtered data with http://localhost:4200/?data=", id2))
