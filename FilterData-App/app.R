@@ -40,6 +40,7 @@ ui <- fluidPage(
     # Subset iris data by species and sepal length
     sidebarLayout(
         sidebarPanel(
+          actionButton("load_data", "Load your data into the application"),
           uiOutput("DatasetUI"), 
           numericInput("RemoveLevel", "Remove values in column 1 below", value = 5),
           actionButton("FilterFun", "Filter data in another container"),
@@ -63,16 +64,19 @@ server <- function(session, input, output) {
     miniocon <- map_data_connection("./cfg/minio_config.yml")
     
     # When the application starts up, check for data in the search string
-    observeEvent(input$`__startup__`, {
+    # observeEvent(input$`__startup__`, {
+    observeEvent(input$load_data, {
       
       # Parse the query string at the url header
       query <- parseQueryString(session$clientData$url_search)
       message(paste0("QUERY:", query))
+      print(query)
       
       # Set a conditional test. We only care if the "data" parameter exists. 
       cond <- length(query) != 0 && "data" %in% names(query) 
       
       message(paste0("CONDITION: ", cond))
+      print(cond)
       
       # If true, open the data and put each piece where it belongs
       if (cond) {
@@ -83,6 +87,7 @@ server <- function(session, input, output) {
         TheTable$ID <- query$data
         
         # Load the unfiltered data
+        message(paste0("LOOK:", query$data))
         TheTable$Unfiltered <- get_data(miniocon, query$data)
         
         # Add the data tag 
@@ -110,7 +115,7 @@ server <- function(session, input, output) {
       
       # Pull the data
       data <- TheTable$Unfiltered
-    
+      message(paste0("LOOK:", Sys.getenv("SHINYPROXY_USERNAME"), TheTable$ID, input$RemoveLevel))
       # Submit filtering task
       TheTable$Job <- celery_app$send_task("filterFun", 
                            kwargs = list(

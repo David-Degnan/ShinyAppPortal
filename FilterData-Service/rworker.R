@@ -9,7 +9,7 @@ if(!file.exists("redis_config.yml")){
   warning("No redis configuration found, attempting connection to default url: redis://redis1:6379")
   redis_url <- "redis://redis1:6379/0"
 } else {
-  redis_cfg = yaml::read_yaml(".cfg/redis_config.yml")
+  redis_cfg = yaml::read_yaml("./cfg/redis_config.yml")
   redis_host = redis_cfg[['host']]
   redis_url <- sprintf('redis://%s:%s/%s', 
                        redis_host, 
@@ -38,14 +38,17 @@ filterFun <- function(username,
   
   # Add shiny proxy username variable to global environment
   Sys.setenv("SHINYPROXY_USERNAME" = username)
+  task_progress(Sys.getenv("SHINYPROXY_USERNAME"))
   
   # Set status message
   task_progress("Pulling data")
   
   # Add a sleep timer for demo purposes only 
-  Sys.sleep(5)
+  Sys.sleep(3)
   
   # Pull data
+  message(id)
+  message(miniocon)
   theData <- get_data(miniocon, id)
   
   # Get tags
@@ -55,13 +58,13 @@ filterFun <- function(username,
   task_progress("Running the filter")
   
   # Add a sleep timer for demo purposes only 
-  Sys.sleep(5)
+  Sys.sleep(3)
   
   # Run filter
   filteredData <- theData[which(theData[,1] > filterval),]
   
   # Pass filtered data back 
-  id2 <- put_file(miniocon, filteredData)
+  id2 <- put_data(miniocon, filteredData)
   
   # Set tags
   set_tags(miniocon, id, list("data" = tags$Dataset))
@@ -69,6 +72,8 @@ filterFun <- function(username,
   # Return status
   task_progress(paste0("Load filtered data with http://localhost:4200/?data=", id2))
   
+  # Add a sleep timer for demo purposes only 
+  Sys.sleep(20)
 }
 
 # Register the task with redis

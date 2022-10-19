@@ -30,12 +30,13 @@ RUN Rscript -e "install.packages(c('reticulate', 'yaml'), repos =  'https://cran
 # Add redis 
 RUN Rscript -e "reticulate::use_virtualenv('/venv'); reticulate::py_install('Redis')"
 
+# Install mapDataAccess
+RUN Rscript -e 'remotes::install_github("EMSL-Computing/mapDataAccess")'
+
 # Copy over required folders
 COPY rworker.R /
 COPY cfg /cfg/ 
 
 # Add the config files (these are dummy files in the repo, still need to mount actual config files)
-COPY minio_config.yml /minio_config.yml
-COPY redis_config.yml /redis_config.yml
 
 CMD ["Rscript", "rworker.R", "&"]

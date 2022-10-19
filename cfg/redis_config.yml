@@ -1,6 +1,6 @@
 type: redis
 host: redis1 
-username: normie
+username: test
 password: testpw
 port: 6379
 db: 0
